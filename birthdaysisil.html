@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise Birthday</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffebee;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .birthday-button {
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .birthday-button:hover {
+            background-color: #f50057;
+            transform: scale(1.05);
+        }
+        
+        .balloon {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            border-radius: 50%;
+            bottom: -100px;
+            z-index: 1;
+            animation: balloonRise 6s linear infinite;
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .balloon::before {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.2);
+            bottom: -40px;
+        }
+        
+        .hidden-content {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            text-align: center;
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 500px;
+        }
+        
+        .hidden-content h1 {
+            font-family: 'Pacifico', cursive;
+            color: #ff4081;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        
+        .hidden-content p {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+        
+        .hidden-content img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin: 20px auto;
+            border: 5px solid #ff4081;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f44336;
+            border-radius: 50%;
+            opacity: 0;
+            z-index: 5;
+        }
+        
+        @keyframes balloonRise {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes burst {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes showContent {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="birthday-button" id="birthdayBtn">Klik untuk Kejutan!</button>
+    </div>
+    
+    <div class="hidden-content" id="hiddenContent">
+        <h1>Selamat Ulang Tahun Bestieee!</h1>
+        <img src="foto1.jpg" alt="Birthday Person">
+        <p>Semoga hari ulang tahunmu penuh dengan kebahagiaan dan tawa!</p>
+        <p>Semoga semua mimpimu terkabul di tahun ini aminnn. 
+        <br> semakin dewasa dan panjang umurr yaa sayangkuu, love uuu >3</p>
+    </div>
+    
+    <script>
+        const birthdayBtn = document.getElementById('birthdayBtn');
+        const hiddenContent = document.getElementById('hiddenContent');
+        const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800'];
+        
+        // Create balloons
+        function createBalloons() {
+            for (let i = 0; i < 15; i++) {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.style.left = `${Math.random() * 100}%`;
+                balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                balloon.style.animationDuration = `${6 + Math.random() * 6}s`;
+                balloon.style.animationDelay = `${Math.random() * 5}s`;
+                
+                balloon.addEventListener('click', () => burstBalloon(balloon));
+                
+                document.body.appendChild(balloon);
+            }
+        }
+        
+        // Burst balloon effect
+        function burstBalloon(balloon) {
+            balloon.style.animation = 'none';
+            
+            // Play pop sound
+            const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-balloon-pop-with-delay-2354.mp3');
+            audio.play();
+            
+            // Create burst effect
+            for (let i = 0; i < 10; i++) {
+                const piece = document.createElement('div');
+                piece.style.position = 'absolute';
+                piece.style.width = '15px';
+                piece.style.height = '15px';
+                piece.style.backgroundColor = balloon.style.backgroundColor;
+                piece.style.borderRadius = '50%';
+                piece.style.left = balloon.offsetLeft + 'px';
+                piece.style.top = balloon.offsetTop + 'px';
+                piece.style.transform = `translate(${Math.random() * 30 - 15}px, ${Math.random() * 30 - 15}px)`;
+                piece.style.animation = `burst 0.5s forwards`;
+                
+                document.body.appendChild(piece);
+                
+                setTimeout(() => {
+                    piece.remove();
+                }, 500);
+            }
+            
+            balloon.remove();
+        }
+        
+        // Create confetti
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animation = `confettiFall ${3 + Math.random() * 5}s linear forwards`;
+                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 10000);
+            }
+        }
+        
+        // Birthday button click handler
+        birthdayBtn.addEventListener('click', () => {
+            createBalloons();
+            birthdayBtn.style.display = 'none';
+            
+            setTimeout(() => {
+                hiddenContent.style.display = 'block';
+                hiddenContent.style.animation = 'showContent 0.8s forwards';
+                createConfetti();
+                
+                // Play birthday song
+                const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-happy-birthday-horn-580.mp3');
+                audio.play();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
